@@ -37,9 +37,14 @@
     const imagePokemon = document.querySelector(".card-img-top");
     const namePokemon = document.querySelector(".card-title");
     const btnShiny = document.querySelector(".btn");
+    btnShiny.classList.add("d-none");
     let shiny = false;
+
+
+    
     selectedPokemon.addEventListener("change", () => {
         shiny = false;
+        btnShiny.classList.remove("d-none");
         loadPokemon(shiny)
     });
 
@@ -63,8 +68,6 @@
                 namePokemon.textContent = "Loading...";
                 console.log("Loading...");
                 await pause(1);
-                console.log(data.sprites.front_default);
-                console.log(document.querySelector(".card-img-top"));
                 namePokemon.textContent = data.forms[0].name;
                 if (!shiny) {
                     imagePokemon.src = data.sprites.front_default;
