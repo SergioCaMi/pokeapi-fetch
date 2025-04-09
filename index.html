@@ -22,7 +22,8 @@
     <div class="container">
         <div class="input-group mb-3">
             <span class="input-group-text" id="selected-pokemon-label">Which pokemon do you want to display?</span>
-            <select id="select-pokemon" class="form-select" aria-label="selected pokemon" aria-describedby="selected-pokemon-label" >
+            <select id="select-pokemon" class="form-select" aria-label="selected pokemon"
+                aria-describedby="selected-pokemon-label">
                 <option selected>Select one pokemon</option>
                 <option value="pikachu">Pikachu</option>
                 <option value="charmander">Charmander</option>
@@ -32,58 +33,74 @@
     </div>
 </body>
 <script>
-const selectedPokemon = document.querySelector("#select-pokemon");
-const imagePokemon = document.querySelector(".card-img-top");
-const namePokemon = document.querySelector(".card-title");
+    const selectedPokemon = document.querySelector("#select-pokemon");
+    const imagePokemon = document.querySelector(".card-img-top");
+    const namePokemon = document.querySelector(".card-title");
+    const btnShiny = document.querySelector(".btn");
+    let shiny = false;
+    selectedPokemon.addEventListener("change", () => {
+        shiny = false;
+        loadPokemon(shiny)
+    });
 
-selectedPokemon.addEventListener("change", async ()=>{
-    console.log(selectedPokemon.value);
-    if (selectedPokemon){
-        try {
-
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${selectedPokemon.value}`);
-        const data = await response.json();
-        selectedPokemon.setAttribute("disabled", "true");
-        namePokemon.textContent = "Loading...";
-        console.log("Loading...");
-        await pause(1);
-        console.log(data.sprites.front_default);
-        console.log(document.querySelector(".card-img-top"));
-        namePokemon.textContent = data.forms[0].name;
-        imagePokemon.src = data.sprites.front_default;
-        imagePokemon.classList.remove("d-none");
-     
-
-        } catch (error) {
-            namePokemon.textContent = "Error loading image. "+error;
-        } finally{
-            selectedPokemon.removeAttribute("disabled");
-        }
+    //setTimeout(function, delayInMilliseconds);
+    function pause(seconds) {
+        return new Promise(resolve => setTimeout(resolve, seconds * 1000));
     }
-})
-
-//setTimeout(function, delayInMilliseconds);
-function pause(seconds) {
-    return new Promise(resolve => setTimeout(resolve, seconds * 1000));
-}
 
 
+    btnShiny.addEventListener("click", () => {
+        shiny = true;
+        loadPokemon(shiny);
+    });
 
-// async function lala(){
-//     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/`);
-//         const data = await response.json();
-//         console.log(data);
-// }
+    async function loadPokemon(shiny) {
+        if (selectedPokemon) {
+            try {
+                const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${selectedPokemon.value}`);
+                const data = await response.json();
+                selectedPokemon.setAttribute("disabled", "true");
+                namePokemon.textContent = "Loading...";
+                console.log("Loading...");
+                await pause(1);
+                console.log(data.sprites.front_default);
+                console.log(document.querySelector(".card-img-top"));
+                namePokemon.textContent = data.forms[0].name;
+                if (!shiny) {
+                    imagePokemon.src = data.sprites.front_default;
+                } else {
+                    imagePokemon.src = data.sprites.front_shiny;
+                    shiny = false;
+                }
+                imagePokemon.classList.remove("d-none");
+            } catch (error) {
+                namePokemon.textContent = "Error loading image. " + error;
+            } finally {
+                selectedPokemon.removeAttribute("disabled");
+            }
+        }
 
-// lala();
+    }
 
 
-// const optionPokemon = document.createElement("option");
-// optionPokemon.setAttribute("value", `${pokemon}`);
-// optionPokemon.innerHTML = `${pokemon}`;
-// selectedPokemon.appendChild(optionPokemon);
 
-  
+
+
+    // async function lala(){
+    //     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/`);
+    //         const data = await response.json();
+    //         console.log(data);
+    // }
+
+    // lala();
+
+
+    // const optionPokemon = document.createElement("option");
+    // optionPokemon.setAttribute("value", `${pokemon}`);
+    // optionPokemon.innerHTML = `${pokemon}`;
+    // selectedPokemon.appendChild(optionPokemon);
+
+
 </script>
 
 </html>
